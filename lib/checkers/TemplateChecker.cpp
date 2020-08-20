@@ -12,10 +12,10 @@ void TemplateChecker::check() {
   // for example
   auto astr_iter = getASTRsBegin();
  // VU_Entry1(astr_iter);//变量未初始化
- Out_Index OI;
+ //Out_Index OI;
  //Buffer_Overflow BOF;
   while (astr_iter != getASTRsEnd()) {
-    OI.OI_Entry(astr_iter);//数组越界
+    //OI.OI_Entry(astr_iter);//数组越界
 
     auto fds = astr_iter->second.GetFunctionDecls();
     for (auto fd : fds) {
@@ -24,15 +24,15 @@ void TemplateChecker::check() {
      //BOF.BOF_Entry_old(fd);
       //VU_Entry2(fd);
       //NPD_Entry(fd);//空指针解引用
-      //ML_Entry(fd);//内存泄漏
+      ML_Entry(fd);//内存泄漏
       }
 
     ++astr_iter;
   }
-  OI.OI_Dectect();
+  //OI.OI_Dectect();
   //VU_Detect();
  // NPD_Detect();
  //BOF.BOF_Detect();
- // ML_Detect();
+ ML_Detect();
   print_result();//打印所有出错信息
 }

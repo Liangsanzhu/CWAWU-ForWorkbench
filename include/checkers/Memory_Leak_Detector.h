@@ -34,10 +34,12 @@ map<int,get_memory*> table;//变量id->分配内存块
 map<int,get_memory*>mem;//内存块id->内存块
 map<int,variable*>sym;//变量id->变量
 
+map<int,int>free_temp;
 
 string FIELD;
 int COL;
 int LINE;
+bool goto_flag=false;
 
 void getmem(const Stmt*S,get_memory*&g)
 {
@@ -61,7 +63,7 @@ void getmem(const Stmt*S,get_memory*&g)
 }
 void getmalloc(const Stmt*S,get_memory*&flag)
 {
-  
+
   for(auto bt=S->child_begin();bt!=S->child_end();bt++)
     {
           getmalloc(*bt,flag);
@@ -72,12 +74,11 @@ void getmalloc(const Stmt*S,get_memory*&flag)
       ValueStmt*F=(ValueStmt*)S;
       Expr*G=F->getExprStmt();
       DeclRefExpr*H=(DeclRefExpr*)G;
-      
-      if(flag==NULL&&(strcmp(H->getDecl()->getName().data(),"malloc")==0||\
-      strcmp(H->getDecl()->getName().data(),"realloc")==0||\
-      strcmp(H->getDecl()->getName().data(),"calloc")==0))
+
+      if(flag==NULL&&(strcmp(H->getDecl()->getName().data(),"malloc")==0))
       {   
         int id=S->getBeginLoc().getRawEncoding();
+       // cout<<LINE<<H->getDecl()->getName().data()<<endl; 
         if(mem.find(id)!=mem.end())
         {
           get_memory*g;
@@ -89,10 +90,87 @@ void getmalloc(const Stmt*S,get_memory*&flag)
           get_memory*g=new get_memory;
           g->isarray=true;
           g->id=id;
-          g->num=0;
+
+	if(free_temp.find(id)!=free_temp.end()&&free_temp[id]<0)
+	{
+	g->num=free_temp[id];
+	free_temp[id]++;
+	}else{
+          g->num=0;}
+
           g->lineno=LINE;
           g->colno=COL;
           g->field=FIELD;
+	if(g->num<0)
+	g->isreleased=true;
+	else
+          g->isreleased=false;
+         // g->lineno=H->get;
+          //g->type=
+         
+          mem.insert(pair<int,get_memory*>(id,g));
+          flag=g;
+        }
+         
+      }
+    }   
+}
+void getmalloc(const Stmt*S,get_memory*&flag,int myid)
+{
+
+  for(auto bt=S->child_begin();bt!=S->child_end();bt++)
+    {
+          getmalloc(*bt,flag,myid);
+    }
+    
+  if(strcmp(S->getStmtClassName(),"DeclRefExpr")==0)
+    {
+      ValueStmt*F=(ValueStmt*)S;
+      Expr*G=F->getExprStmt();
+      DeclRefExpr*H=(DeclRefExpr*)G;
+
+      if(flag==NULL&&(strcmp(H->getDecl()->getName().data(),"malloc")==0))
+      {   
+        int id=S->getBeginLoc().getRawEncoding();
+       // cout<<LINE<<H->getDecl()->getName().data()<<endl; 
+        if(mem.find(id)!=mem.end())
+        {
+          get_memory*g;
+          g=mem.find(id)->second;
+          g->num++;
+          
+	if(free_temp.find(myid)!=free_temp.end()&&free_temp[myid]<0)
+	{
+	g->num+=free_temp[myid];
+	free_temp[myid]++;
+//cout<<"hello"<<endl;
+	}
+	if(g->num<=0)
+	g->isreleased=true;
+	else
+          g->isreleased=false;
+	flag=g;//cout<<"myid= "<<myid<<" "<<g->num<<endl;
+	
+        }else
+        {
+          get_memory*g=new get_memory;
+          g->isarray=true;
+          g->id=id;
+//cout<<"myid= "<<myid<<endl;
+	if(free_temp.find(myid)!=free_temp.end()&&free_temp[myid]<0)
+	{
+	g->num=free_temp[myid];
+	free_temp[myid]++;
+//cout<<"hello"<<endl;
+	}else{
+          g->num=0;}
+
+          g->lineno=LINE;
+          g->colno=COL;
+          g->field=FIELD;
+	if(g->num<0)
+	g->isreleased=true;
+	else
           g->isreleased=false;
          // g->lineno=H->get;
           //g->type=
@@ -181,7 +259,7 @@ void TraverseCfg(const Stmt*S,int lay)
         else
         {
           get_memory*flag=NULL;;
-          getmalloc(S,flag);
+          getmalloc(S,flag,id);
           if(flag!=NULL)
           { //cout<<g->type<<"$$$$"<<endl;
             table.insert(pair<int,get_memory*>(id,flag));
@@ -190,34 +268,12 @@ void TraverseCfg(const Stmt*S,int lay)
       }
 
   }
-else if(strcmp(S->getStmtClassName(),"CallExpr")==0)
-{
-  get_memory*gm=NULL;;
-  getmalloc(S,gm);
-  bool flag=false;
-  getfree(S,flag);
-  if(flag==true)
-  {
-    int id=-1;
-    getvar(S,id);
-    if(id!=-1)
-    {
-    if(table.find(id)!=table.end())
-    {
-      get_memory*g=table.find(id)->second;
-      
-        g->num--;
-      
-    }
-      
-    }
-  }
-}
+
 else if(strcmp(S->getStmtClassName(),"DeclStmt")==0)
 {
   DeclStmt*F=(DeclStmt*)S;
   VarDecl*v=(VarDecl*)F->getSingleDecl();
-  
+
   if(lay==1)
   {
     
@@ -255,10 +311,13 @@ else if(strcmp(S->getStmtClassName(),"DeclStmt")==0)
    }
    else
    {
-      get_memory*flag=NULL;;
-      getmalloc(S,flag);
+      get_memory*flag=NULL;
+      getmalloc(S,flag,id);
+//if(LINE==196)
+//cout<<"insert"<<id<<endl;
       if(flag!=NULL)
       { //cout<<g->type<<"$$$$"<<endl;
+
         variable*var=new variable;
         var->name=v->getNameAsString();
         var->id=v->getGlobalID();
@@ -272,6 +331,40 @@ else if(strcmp(S->getStmtClassName(),"DeclStmt")==0)
    }
   }
 
+}
+else if(strcmp(S->getStmtClassName(),"CallExpr")==0)
+{
+  get_memory*gm=NULL;;
+  getmalloc(S,gm);
+  bool flag=false;
+  getfree(S,flag);
+  if(flag==true)
+  {
+
+    int id=-1;
+    getvar(S,id);
+    if(id!=-1)
+    {
+
+    if(table.find(id)!=table.end())
+    {
+//cout<<LINE<<"find free"<<" "<<id<<endl;
+      get_memory*g=table.find(id)->second;
+      g->num--;
+	free_temp[id]--;
+    }else{
+	if(goto_flag==true)
+	return;
+	if(free_temp.find(id)!=free_temp.end())
+	{
+		free_temp.insert(pair<int,int>(id,0));
+	}
+	free_temp[id]--;
+//cout<<LINE<<"find new free"<<id<<","<<free_temp[id]<<endl;
+	}
+      
+    }
+  }
 }
 else if(strcmp(S->getStmtClassName(),"CXXNewExpr")==0)
 {
@@ -332,7 +425,7 @@ void detect()
   {
     get_memory*g=it->second;
   int v=it->first;
-    if(g->num==0)
+    if(g->num<=0)
       g->isreleased=true;
     
     if(g->isreleased==false)
@@ -362,6 +455,7 @@ void detect()
        error_info* e=new_error_info(NULL,g->field,g->lineno,g->colno,TYPE_ERROR,ML_ERROR_TYPE_MISS);
        result.push(e);
     }
+
   }
  
 }
@@ -371,8 +465,17 @@ void ML_Entry(clang::FunctionDecl*fd)
   auto fd_cfg = common::buildCFG(fd);
   clang::SourceManager&srcMgr(fd->getASTContext().getSourceManager());
 
-       for(CFG::iterator it=fd_cfg->begin();it!=fd_cfg->end();it++)
+      for(CFG::iterator it=fd_cfg->begin();it!=fd_cfg->end();it++)
       {
+	goto_flag=false;
+        if(it+1!=fd_cfg->end()){
+	 if((*(it+1))->getTerminatorStmt()!=NULL)
+      	if(strcmp((*(it+1))->getTerminatorStmt()->getStmtClassName(),"GotoStmt")==0){
+			goto_flag=true;
+		}
+	}
+        
+      
       for(CFGBlock::iterator at=(*it)->begin();at!=(*it)->end();at++)
       {
         //cout<<at->getgetmemnd()<<endl;
@@ -392,8 +495,10 @@ void ML_Entry(clang::FunctionDecl*fd)
           COL=srcMgr.getSpellingColumnNumber(S->getBeginLoc());
           LINE=srcMgr.getSpellingLineNumber(S->getBeginLoc());
          
-          
           //cout<<S->getStmtClassName()<<"***"<<endl;
+
+//cout<<LINE<<endl;
+//cout<<S->getStmtClassName()<<endl;
           TraverseCfg(S,1);
          // bool k=false;
          

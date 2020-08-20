@@ -2,7 +2,7 @@
 #define N_P_D_H
 #include"Detector.h"
 #include "assert.h"
-class Null_Pointer_Detector{
+/*class Null_Pointer_Detector{
 private:
 
 struct savePointer{
@@ -243,7 +243,7 @@ void VisitBlock(clang::CFGBlock *block, SourceManager *SrcMgr, clang::CFGBlock *
     //cout<<"     Get the block id\n";
   /*   if(block->getTerminatorStmt()!=nullptr)
         if(strcmp(block->getTerminatorStmt()->getStmtClassName(),"IfStmt")==0)
-            ifBlock.push_back(block->getBlockID()-1); */
+            ifBlock.push_back(block->getBlockID()-1); 
     //if(block->getLabel()!=nullptr)
         //std::cout<<block->getLabel()->getStmtClassName()<<block->getBlockID()<<std::endl;    
      int block_id = block->getBlockID();
@@ -282,7 +282,7 @@ void NPD_Detect(std::vector<int>ifBlock){
     string file0, file;
    // RED
    /*  showSave();
-    showIf(ifBlock); */
+    showIf(ifBlock); 
     //CLOSE
     bool npd = false;
     //cout<<"I'm in detect of each route.\n";
@@ -361,6 +361,6 @@ void NPD_Detect(std::vector<int>ifBlock){
     }
     vector <savePointer>().swap(recordPointer);
  }
-};
+};*/
 
 #endif
