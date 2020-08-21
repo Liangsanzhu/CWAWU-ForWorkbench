@@ -12,7 +12,7 @@ using namespace std;
 #include "framework/ASTManager.h"
 
 #define CLOSE printf("\033[0m"); //关闭彩色字体
-#define LIGHT printf("\033[1m");
+#define LIGHT printf("\033[1m");//高亮
 #define RED printf("\033[31m"); //红色字体
 #define WHITE printf("\033[37m"); //bai色字体
 #define GREEN printf("\033[32m");//绿色字体
@@ -35,6 +35,12 @@ string VU_ERROR_TYPE_DEL_B="' is declared here";
 string VU_ERROR_TYPE_USE="Used here";
 string OI_ERROR_TYPE_ARRAY_A="Array '";
 string OI_ERROR_TYPE_ARRAY_B="' is out of range";
+
+int ml=0;
+int vud=1;
+int bof=2;
+int oi=3;
+int npd=4;
 
 map<string,vector<string>> SourceCode;
 
@@ -62,14 +68,17 @@ struct error_info
   int type;
   error_info*next;
   string filter;
+  int kind;
  
  bool operator<(const error_info& a) const
     {
-      if(filename<a.filename)
+	if(kind<a.kind)
+	return true;
+      if(kind==a.kind&&filename<a.filename)
       return true;
-        if(filename==a.filename&&lineno<a.lineno)
+        if(kind==a.kind&&filename==a.filename&&lineno<a.lineno)
         return true;
-        if(filename==a.filename&&lineno==a.lineno&&colno<a.colno)
+        if(kind==a.kind&&filename==a.filename&&lineno==a.lineno&&colno<a.colno)
         return true;
         return false;
     }
@@ -84,7 +93,7 @@ struct cmp //重写仿函数
 
 priority_queue<error_info*,vector<error_info*>,cmp >result;//
 //string FILED;uanma 
-error_info* new_error_info(error_info*g,string filename,int line,int col,int type,string info)
+error_info* new_error_info(error_info*g,string filename,int line,int col,int type,string info,int kind)
 {
   error_info*e=new error_info;
   vector<string>t;
@@ -98,11 +107,12 @@ error_info* new_error_info(error_info*g,string filename,int line,int col,int typ
   e->info=info;//Error/Note/Warning:后面跟着的一些文字
   e->next=g;//需要关联报错的下一个指针，需要先创建好
   e->filter="";
+  e->kind=kind;
   return e;
  
 }
 
-error_info* new_error_info(error_info*g,string filename,int line,int col,int type,string info,string filter)
+error_info* new_error_info(error_info*g,string filename,int line,int col,int type,string info,string filter,int kind)
 {
   error_info*e=new error_info;
   vector<string>t;
@@ -116,9 +126,12 @@ error_info* new_error_info(error_info*g,string filename,int line,int col,int typ
   e->info=info;//Error/Note/Warning:后面跟着的一些文字
   e->next=g;//需要关联报错的下一个指针，需要先创建好
   e->filter=filter;
+
+  e->kind=kind;
   return e;
  
 }
+
 
 
 void Get_SourceCode(clang::FunctionDecl*fd)
@@ -137,6 +150,7 @@ string FILENAME=srcMgr.getFilename(srcMgr.getLocForStartOfFile(srcMgr.getMainFil
         SourceCode.insert(pair<string,vector<string>>(FILENAME,SourceCodeItem));
       }
 }
+int counttemp=0;
 bool print_error(error_info*e)
 {
  // LIGHT
@@ -149,6 +163,10 @@ if(e->filter!=""&&SourceCode.find(e->filename)!=SourceCode.end()&&e->lineno>=1)
 	if(SourceCode.find(e->filename)->second[e->lineno-1].find(e->filter)==string::npos)
 		return false;
  }
+LIGHT
+BLUE
+cout<<counttemp+1<<":";
+CLOSE
   LIGHT
   cout<<e->filename<<":"<<e->lineno<<":"<<e->colno<<":";
   switch(e->type)
@@ -185,6 +203,8 @@ if(e->filter!=""&&SourceCode.find(e->filename)!=SourceCode.end()&&e->lineno>=1)
   print_error(e->next);
 return true;
 }
+int lasttype=-1;
+
 void print_result()
 {
     //for(auto it:SourceCode)
@@ -192,18 +212,60 @@ void print_result()
     int count=0;
  while(!result.empty())
   {
-    
+    int type_temp=result.top()->kind;
+if(type_temp!=lasttype)
+{
+if(counttemp>1)
+  cout<<counttemp<<" errors generated."<<endl<<endl<<endl;
+  else if(counttemp==1)
+   cout<<counttemp<<" error generated."<<endl<<endl<<endl;
+  counttemp=0;
+	LIGHT
+	YELLOW
+	switch(type_temp){
+		case 0:cout<<"[Memory Leak]"<<endl;break;
+		case 3:cout<<"[Array Out Of Index]"<<endl;break;
+		case 1:cout<<"[Variable Undefined]"<<endl;break;
+		case 4:cout<<"[Null Pointer Dereference]"<<endl;break;
+		case 2:cout<<"[Buffer Overflow]"<<endl;break;
+	}
+	CLOSE
+cout<<"---------------------------------------------\n";
+	 
+}
+lasttype=type_temp;
+
+
     if(print_error(result.top()))
 	{
 		count++;
-cout<<"--------------------------------------\n";
+		counttemp++;
+cout<<"---------------------------------------------\n";
+
 	}
     result.pop();
   }
+if(counttemp>1)
+  cout<<counttemp<<" errors generated."<<endl<<endl<<endl;
+  else if(counttemp==1)
+   cout<<counttemp<<" error generated."<<endl<<endl<<endl;
+  counttemp=0;
+LIGHT
+YELLOW
+cout<<"[TOTAL ERROR]"<<endl;
+CLOSE
   if(count>1)
-  cout<<endl<<count<<" errors generated."<<endl;
+  cout<<count<<" errors generated."<<endl;
   else if(count==1)
-   cout<<endl<<count<<" error generated."<<endl;
+   cout<<count<<" error generated."<<endl;
+  else
+ cout<<"no error generated."<<endl;
+cout<<endl<<endl<<" ██████╗██╗    ██╗ █████╗ ██╗    ██╗██╗   ██╗\n\
+██╔════╝██║    ██║██╔══██╗██║    ██║██║   ██║\n\
+██║     ██║ █╗ ██║███████║██║ █╗ ██║██║   ██║\n\
+██║     ██║███╗██║██╔══██║██║███╗██║██║   ██║\n\
+╚██████╗╚███╔███╔╝██║  ██║╚███╔███╔╝╚██████╔╝\n\
+ ╚═════╝ ╚══╝╚══╝ ╚═╝  ╚═╝ ╚══╝╚══╝  ╚═════╝"<<endl;
 }
 
 

@@ -750,7 +750,7 @@ public:
         for (int i = 0; i < bof_info.size(); i++)
         {
             bof_error tmp = bof_info[i];
-            error_info *e = new_error_info(NULL, tmp.filename, tmp.line, tmp.col, TYPE_ERROR, tmp.info);
+            error_info *e = new_error_info(NULL, tmp.filename, tmp.line, tmp.col, TYPE_ERROR, tmp.info,bof);
             result.push(e);
         }
     }

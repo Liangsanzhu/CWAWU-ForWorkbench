@@ -2135,7 +2135,7 @@ void Out_Index::OI_DectectZero()
         if(ArrayDefn[i->first][j]<=i->second[j] || i->second[j]<0)//上溢 || 下溢
         {
             // error_info*e=new_error_info(NULL,scMg->getFilename(ArrayLocation[i->first]).str(),scMg->getSpellingLineNumber(ArrayLocation[i->first]),scMg->getSpellingColumnNumber(ArrayLocation[i->first]),TYPE_ERROR,OI_ERROR_TYPE_ARRAY_A+i->first+OI_ERROR_TYPE_ARRAY_B);
-            error_info*e=new_error_info(NULL,scMg->getFilename(ArrayLocation[i->first]).str(),scMg->getSpellingLineNumber(ArrayLocation[i->first]),scMg->getSpellingColumnNumber(ArrayLocation[i->first]),TYPE_ERROR,OI_ERROR_TYPE_ARRAY_A+i->first+OI_ERROR_TYPE_ARRAY_B,i->first);
+            error_info*e=new_error_info(NULL,scMg->getFilename(ArrayLocation[i->first]).str(),scMg->getSpellingLineNumber(ArrayLocation[i->first]),scMg->getSpellingColumnNumber(ArrayLocation[i->first]),TYPE_ERROR,OI_ERROR_TYPE_ARRAY_A+i->first+OI_ERROR_TYPE_ARRAY_B,i->first,oi);
             result.push(e);
             break;
         }
@@ -2183,7 +2183,7 @@ void Out_Index::OI_DectectTwo()
                 // error_info*e=new_error_info(NULL,scMg->getFilename(ArrayLocation[i->first]).str(),scMg->getSpellingLineNumber(ArrayLocation[i->first]),scMg->getSpellingColumnNumber(ArrayLocation[i->first]),TYPE_ERROR,OI_ERROR_TYPE_ARRAY_A+i->first+OI_ERROR_TYPE_ARRAY_B);
                 std::string ArrayNameTemp = i->second.name;
                 SourceLocation locationTemp = i->first;
-                error_info*e=new_error_info(NULL,scMg->getFilename(locationTemp).str(),scMg->getSpellingLineNumber(locationTemp),scMg->getSpellingColumnNumber(locationTemp),TYPE_ERROR,OI_ERROR_TYPE_ARRAY_A+ArrayNameTemp+OI_ERROR_TYPE_ARRAY_B,ArrayNameTemp);
+                error_info*e=new_error_info(NULL,scMg->getFilename(locationTemp).str(),scMg->getSpellingLineNumber(locationTemp),scMg->getSpellingColumnNumber(locationTemp),TYPE_ERROR,OI_ERROR_TYPE_ARRAY_A+ArrayNameTemp+OI_ERROR_TYPE_ARRAY_B,ArrayNameTemp,oi);
                 result.push(e);
                 break;
             }
@@ -2238,7 +2238,7 @@ void Out_Index::OI_DectectTwo_One()
             SourceLocation *locationTemp = new SourceLocation(i->first);
             cout<<scMg->getFilename(*locationTemp).str()<<endl;
             //cout<<i->second.name<<endl;break;
-            error_info*e=new_error_info(NULL,scMg->getFilename(*locationTemp).str(),scMg->getSpellingLineNumber(*locationTemp),scMg->getSpellingColumnNumber(*locationTemp),TYPE_ERROR,OI_ERROR_TYPE_ARRAY_A+ArrayNameTemp+OI_ERROR_TYPE_ARRAY_B,ArrayNameTemp);
+            error_info*e=new_error_info(NULL,scMg->getFilename(*locationTemp).str(),scMg->getSpellingLineNumber(*locationTemp),scMg->getSpellingColumnNumber(*locationTemp),TYPE_ERROR,OI_ERROR_TYPE_ARRAY_A+ArrayNameTemp+OI_ERROR_TYPE_ARRAY_B,ArrayNameTemp,oi);
             // error_info*e=new_error_info(NULL,"aa",scMg->getSpellingLineNumber(locationTemp),scMg->getSpellingColumnNumber(locationTemp),TYPE_ERROR,OI_ERROR_TYPE_ARRAY_A+ArrayNameTemp+OI_ERROR_TYPE_ARRAY_B);
             result.push(e);
             break;
@@ -2304,7 +2304,7 @@ void Out_Index::OI_DectectTwo_Two()
             }
             else {
                 //cout<<i->second.name<<endl;break;
-                error_info*e=new_error_info(NULL,filenameTemp,lineTemp,colTemp,TYPE_ERROR,OI_ERROR_TYPE_ARRAY_A+ArrayNameTemp+OI_ERROR_TYPE_ARRAY_B,ArrayNameTemp);
+                error_info*e=new_error_info(NULL,filenameTemp,lineTemp,colTemp,TYPE_ERROR,OI_ERROR_TYPE_ARRAY_A+ArrayNameTemp+OI_ERROR_TYPE_ARRAY_B,ArrayNameTemp,oi);
                 // error_info*e=new_error_info(NULL,"aa",scMg->getSpellingLineNumber(locationTemp),scMg->getSpellingColumnNumber(locationTemp),TYPE_ERROR,OI_ERROR_TYPE_ARRAY_A+ArrayNameTemp+OI_ERROR_TYPE_ARRAY_B);
                 result.push(e);
                 tempSet.insert(make_pair(filenameTemp,lineTemp));
@@ -2361,7 +2361,7 @@ void Out_Index::OI_DectectFive()
             // error_info*e=new_error_info(NULL,scMg->getFilename(ArrayLocation[i->first]).str(),scMg->getSpellingLineNumber(ArrayLocation[i->first]),scMg->getSpellingColumnNumber(ArrayLocation[i->first]),TYPE_ERROR,OI_ERROR_TYPE_ARRAY_A+i->first+OI_ERROR_TYPE_ARRAY_B);
             std::string ArrayNameTemp = i->second.name;
             SourceLocation locationTemp = i->first;
-            error_info*e=new_error_info(NULL,scMg->getFilename(locationTemp).str(),scMg->getSpellingLineNumber(locationTemp),scMg->getSpellingColumnNumber(locationTemp),TYPE_ERROR,OI_ERROR_TYPE_ARRAY_A+ArrayNameTemp+OI_ERROR_TYPE_ARRAY_B,ArrayNameTemp);
+            error_info*e=new_error_info(NULL,scMg->getFilename(locationTemp).str(),scMg->getSpellingLineNumber(locationTemp),scMg->getSpellingColumnNumber(locationTemp),TYPE_ERROR,OI_ERROR_TYPE_ARRAY_A+ArrayNameTemp+OI_ERROR_TYPE_ARRAY_B,ArrayNameTemp,oi);
             result.push(e);
             break;
         }
@@ -2380,7 +2380,7 @@ void Out_Index::OI_DectectFive()
             // error_info*e=new_error_info(NULL,scMg->getFilename(ArrayLocation[i->first]).str(),scMg->getSpellingLineNumber(ArrayLocation[i->first]),scMg->getSpellingColumnNumber(ArrayLocation[i->first]),TYPE_ERROR,OI_ERROR_TYPE_ARRAY_A+i->first+OI_ERROR_TYPE_ARRAY_B);
             std::string ArrayNameTemp = i->second.name;
             SourceLocation locationTemp = i->first;
-            error_info*e=new_error_info(NULL,scMg->getFilename(locationTemp).str(),scMg->getSpellingLineNumber(locationTemp),scMg->getSpellingColumnNumber(locationTemp),TYPE_ERROR,OI_ERROR_TYPE_ARRAY_A+ArrayNameTemp+OI_ERROR_TYPE_ARRAY_B,ArrayNameTemp);
+            error_info*e=new_error_info(NULL,scMg->getFilename(locationTemp).str(),scMg->getSpellingLineNumber(locationTemp),scMg->getSpellingColumnNumber(locationTemp),TYPE_ERROR,OI_ERROR_TYPE_ARRAY_A+ArrayNameTemp+OI_ERROR_TYPE_ARRAY_B,ArrayNameTemp,oi);
             result.push(e);
             break;
         }

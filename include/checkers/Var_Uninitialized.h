@@ -408,7 +408,7 @@ void VU_Detect()
 			int decline = -1;
 			std::vector<std::pair<int, int>> d = all_node.get_node()[(*b).first].get_du();
 			for (auto b_in = d.begin(); b_in != d.end(); ++b_in) {
-				error_info*e = new_error_info(NULL, "", (*b_in).second, 0, TYPE_NOTE, VU_ERROR_TYPE_USE);
+				error_info*e = new_error_info(NULL, "", (*b_in).second, 0, TYPE_NOTE, VU_ERROR_TYPE_USE,vud);
 				if (head == NULL)
 				{
 					head = e;
@@ -423,7 +423,7 @@ void VU_Detect()
 			}
 			if (decline != -1)
 			{
-				error_info* decl = new_error_info(head,"", decline, 0, TYPE_ERROR, VU_ERROR_TYPE_DEL_A+(*b).first+VU_ERROR_TYPE_DEL_B);
+				error_info* decl = new_error_info(head,"", decline, 0, TYPE_ERROR, VU_ERROR_TYPE_DEL_A+(*b).first+VU_ERROR_TYPE_DEL_B,vud);
 				result.push(decl);
 			}
 		}

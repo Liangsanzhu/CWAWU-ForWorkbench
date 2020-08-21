@@ -2,8 +2,9 @@
 #define M_L_D_H
 #include"Detector.h"
 
-
-
+class MemoryLeak{
+public:
+MemoryLeak(){}
 struct variable
 {
    
@@ -403,9 +404,9 @@ else if(strcmp(S->getStmtClassName(),"CXXDeleteExpr")==0)
      }
      else
      {
-       error_info* e=new_error_info(NULL,g->field,g->lineno,g->colno,TYPE_NOTE,ML_ERROR_TYPE_LOCATION);
+       error_info* e=new_error_info(NULL,g->field,g->lineno,g->colno,TYPE_NOTE,ML_ERROR_TYPE_LOCATION,ml);
         //result.push(e);
-        error_info* te=new_error_info(e,FIELD,LINE,COL,TYPE_ERROR,ML_ERROR_TYPE_NOTMATCH);
+        error_info* te=new_error_info(e,FIELD,LINE,COL,TYPE_ERROR,ML_ERROR_TYPE_NOTMATCH,ml);
         result.push(te);
      }
      
@@ -440,7 +441,7 @@ void detect()
         add_result(g->field,g->lineno,g->colno,TYPE_NOTE,ML_ERROR_TYPE_LOCATION);
         
         cout<<"  Name:"<<var->name<<endl;*/
-        error_info*e=new_error_info(NULL,g->field,g->lineno,g->colno,TYPE_ERROR,ML_ERROR_TYPE_LOCATION);
+        error_info*e=new_error_info(NULL,g->field,g->lineno,g->colno,TYPE_ERROR,ML_ERROR_TYPE_LOCATION,ml);
         //error_info* te=new_error_info(e,var->field,var->lineno,var->colno,TYPE_ERROR,ML_ERROR_TYPE_MISS);
         result.push(e);
       }
@@ -452,7 +453,7 @@ void detect()
     get_memory*g=it->second;
     if(g->isreleased==false)
     {
-       error_info* e=new_error_info(NULL,g->field,g->lineno,g->colno,TYPE_ERROR,ML_ERROR_TYPE_MISS);
+       error_info* e=new_error_info(NULL,g->field,g->lineno,g->colno,TYPE_ERROR,ML_ERROR_TYPE_MISS,ml);
        result.push(e);
     }
 
@@ -510,4 +511,5 @@ void ML_Detect()
 {
   detect();
 }
+};
 #endif // M_L_D_H
