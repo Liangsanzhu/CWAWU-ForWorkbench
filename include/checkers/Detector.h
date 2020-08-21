@@ -2,6 +2,7 @@
 #define D_T_H
 #include<iostream>
 using namespace std;
+#include <fstream>
 #include <vector>
 #include<map>
 #include<queue>
@@ -19,7 +20,7 @@ using namespace std;
 #define BLACK printf("\033[30m");//hei色字体
 #define YELLOW printf("\033[33m");//黄色字体
 #define BLUE printf("\033[34m");//蓝色字体
-
+#define EDGE "\033[36m"
 
 #define FLAG_EMPTY -1
 #define FLAG_BINARY 1
@@ -131,7 +132,94 @@ error_info* new_error_info(error_info*g,string filename,int line,int col,int typ
   return e;
  
 }
+void readline()
+{
 
+	ifstream infile;
+	infile.open("../../error_detail.txt", ios::in);
+	if (!infile.is_open())
+	{
+		cout << "读取缺陷报错配置文件失败" << endl;
+		return;
+	}
+	//第二种读取方法
+	char buf[1024];
+	while (infile.getline(buf,sizeof(buf)))
+	{
+
+	    char *p;
+	    const char *delim = ":";
+	    p = strtok(buf, delim);
+	    while(p) 
+	    {
+		char*q=p;
+		p = strtok(NULL, delim);
+		
+		if(p)
+		{
+		
+		if(strcmp(q,"ML_ERROR_TYPE_MISS")==0)
+		{
+			ML_ERROR_TYPE_MISS=p;
+			break;	
+		}
+		else if(strcmp(q,"ML_ERROR_TYPE_NOTMATCH")==0)
+		{
+			ML_ERROR_TYPE_NOTMATCH=p;
+			break;	
+		}
+		else if(strcmp(q,"ML_ERROR_TYPE_LOCATION")==0)
+		{
+			ML_ERROR_TYPE_LOCATION=p;
+			break;	
+		}
+		else if(strcmp(q,"NPD_ERROR_TYPE_DEREFERENCE")==0)
+		{
+			NPD_ERROR_TYPE_DEREFERENCE=p;	
+			break;
+		}
+		else if(strcmp(q,"NPD_ERROR_TYPE_SET_NULL")==0)
+		{
+			NPD_ERROR_TYPE_SET_NULL=p;
+			break;	
+		}
+		else if(strcmp(q,"VU_ERROR_TYPE_DEL_A")==0)
+		{
+			VU_ERROR_TYPE_DEL_A=p;	
+			break;
+		}
+		else if(strcmp(q,"VU_ERROR_TYPE_DEL_B")==0)
+		{
+			VU_ERROR_TYPE_DEL_B=p;	
+			break;
+		}
+		else if(strcmp(q,"VU_ERROR_TYPE_DEL_A")==0)
+		{
+			VU_ERROR_TYPE_DEL_A=p;	
+			break;
+		}
+		else if(strcmp(q,"VU_ERROR_TYPE_USE")==0)
+		{
+			VU_ERROR_TYPE_USE=p;
+			break;	
+		}
+		else if(strcmp(q,"OI_ERROR_TYPE_ARRAY_A")==0)
+		{
+			OI_ERROR_TYPE_ARRAY_A=p;
+			break;	
+		}
+		else if(strcmp(q,"OI_ERROR_TYPE_ARRAY_B")==0)
+		{
+			OI_ERROR_TYPE_ARRAY_B=p;
+			break;	
+		}
+		
+		}
+	    }
+
+	
+	}
+}
 
 
 void Get_SourceCode(clang::FunctionDecl*fd)
@@ -209,6 +297,7 @@ void print_result()
 {
     //for(auto it:SourceCode)
     //cout<<it<<endl;
+
     int count=0;
  while(!result.empty())
   {
@@ -260,12 +349,12 @@ CLOSE
    cout<<count<<" error generated."<<endl;
   else
  cout<<"no error generated."<<endl;
-cout<<endl<<endl<<" ██████╗██╗    ██╗ █████╗ ██╗    ██╗██╗   ██╗\n\
-██╔════╝██║    ██║██╔══██╗██║    ██║██║   ██║\n\
-██║     ██║ █╗ ██║███████║██║ █╗ ██║██║   ██║\n\
-██║     ██║███╗██║██╔══██║██║███╗██║██║   ██║\n\
-╚██████╗╚███╔███╔╝██║  ██║╚███╔███╔╝╚██████╔╝\n\
- ╚═════╝ ╚══╝╚══╝ ╚═╝  ╚═╝ ╚══╝╚══╝  ╚═════╝"<<endl;
+cout<<endl<<endl<<" ██████"<<EDGE<<"╗"<<"\033[0m"<<"██"<<EDGE<<"╗"<<"\033[0m"<<"    ██"<<EDGE<<"╗"<<"\033[0m"<<" █████"<<EDGE<<"╗"<<"\033[0m"<<" ██"<<EDGE<<"╗"<<"\033[0m"<<"    ██"<<EDGE<<"╗"<<"\033[0m"<<"██"<<EDGE<<"╗"<<"\033[0m"<<"   ██"<<EDGE<<"╗"<<"\033[0m"<<"\n\
+██"<<EDGE<<"╔"<<"\033[0m"<<""<<EDGE<<"═"<<"\033[0m"<<""<<EDGE<<"═"<<"\033[0m"<<""<<EDGE<<"═"<<"\033[0m"<<""<<EDGE<<"═"<<"\033[0m"<<""<<EDGE<<"╝"<<"\033[0m"<<"██"<<EDGE<<"║"<<"\033[0m"<<"    ██"<<EDGE<<"║"<<"\033[0m"<<"██"<<EDGE<<"╔"<<"\033[0m"<<""<<EDGE<<"═"<<"\033[0m"<<""<<EDGE<<"═"<<"\033[0m"<<"██"<<EDGE<<"╗"<<"\033[0m"<<"██"<<EDGE<<"║"<<"\033[0m"<<"    ██"<<EDGE<<"║"<<"\033[0m"<<"██"<<EDGE<<"║"<<"\033[0m"<<"   ██"<<EDGE<<"║"<<"\033[0m"<<"\n\
+██"<<EDGE<<"║"<<"\033[0m"<<"     ██"<<EDGE<<"║"<<"\033[0m"<<" █"<<EDGE<<"╗"<<"\033[0m"<<" ██"<<EDGE<<"║"<<"\033[0m"<<"███████"<<EDGE<<"║"<<"\033[0m"<<"██"<<EDGE<<"║"<<"\033[0m"<<" █"<<EDGE<<"╗"<<"\033[0m"<<" ██"<<EDGE<<"║"<<"\033[0m"<<"██"<<EDGE<<"║"<<"\033[0m"<<"   ██"<<EDGE<<"║"<<"\033[0m"<<"\n\
+██"<<EDGE<<"║"<<"\033[0m"<<"     ██"<<EDGE<<"║"<<"\033[0m"<<"███"<<EDGE<<"╗"<<"\033[0m"<<"██"<<EDGE<<"║"<<"\033[0m"<<"██"<<EDGE<<"╔"<<"\033[0m"<<""<<EDGE<<"═"<<"\033[0m"<<""<<EDGE<<"═"<<"\033[0m"<<"██"<<EDGE<<"║"<<"\033[0m"<<"██"<<EDGE<<"║"<<"\033[0m"<<"███"<<EDGE<<"╗"<<"\033[0m"<<"██"<<EDGE<<"║"<<"\033[0m"<<"██"<<EDGE<<"║"<<"\033[0m"<<"   ██"<<EDGE<<"║"<<"\033[0m"<<"\n\
+"<<EDGE<<"╚"<<"\033[0m"<<"██████"<<EDGE<<"╗"<<"\033[0m"<<""<<EDGE<<"╚"<<"\033[0m"<<"███"<<EDGE<<"╔"<<"\033[0m"<<"███"<<EDGE<<"╔"<<"\033[0m"<<""<<EDGE<<"╝"<<"\033[0m"<<"██"<<EDGE<<"║"<<"\033[0m"<<"  ██"<<EDGE<<"║"<<"\033[0m"<<""<<EDGE<<"╚"<<"\033[0m"<<"███"<<EDGE<<"╔"<<"\033[0m"<<"███"<<EDGE<<"╔"<<"\033[0m"<<""<<EDGE<<"╝"<<"\033[0m"<<""<<EDGE<<"╚"<<"\033[0m"<<"██████"<<EDGE<<"╔"<<"\033[0m"<<""<<EDGE<<"╝"<<"\033[0m"<<"\n\
+ "<<EDGE<<"╚"<<"\033[0m"<<""<<EDGE<<"═"<<"\033[0m"<<""<<EDGE<<"═"<<"\033[0m"<<""<<EDGE<<"═"<<"\033[0m"<<""<<EDGE<<"═"<<"\033[0m"<<""<<EDGE<<"═"<<"\033[0m"<<""<<EDGE<<"╝"<<"\033[0m"<<" "<<EDGE<<"╚"<<"\033[0m"<<""<<EDGE<<"═"<<"\033[0m"<<""<<EDGE<<"═"<<"\033[0m"<<""<<EDGE<<"╝"<<"\033[0m"<<""<<EDGE<<"╚"<<"\033[0m"<<""<<EDGE<<"═"<<"\033[0m"<<""<<EDGE<<"═"<<"\033[0m"<<""<<EDGE<<"╝"<<"\033[0m"<<" "<<EDGE<<"╚"<<"\033[0m"<<""<<EDGE<<"═"<<"\033[0m"<<""<<EDGE<<"╝"<<"\033[0m"<<"  "<<EDGE<<"╚"<<"\033[0m"<<""<<EDGE<<"═"<<"\033[0m"<<""<<EDGE<<"╝"<<"\033[0m"<<" "<<EDGE<<"╚"<<"\033[0m"<<""<<EDGE<<"═"<<"\033[0m"<<""<<EDGE<<"═"<<"\033[0m"<<""<<EDGE<<"╝"<<"\033[0m"<<""<<EDGE<<"╚"<<"\033[0m"<<""<<EDGE<<"═"<<"\033[0m"<<""<<EDGE<<"═"<<"\033[0m"<<""<<EDGE<<"╝"<<"\033[0m"<<"  "<<EDGE<<"╚"<<"\033[0m"<<""<<EDGE<<"═"<<"\033[0m"<<""<<EDGE<<"═"<<"\033[0m"<<""<<EDGE<<"═"<<"\033[0m"<<""<<EDGE<<"═"<<"\033[0m"<<""<<EDGE<<"═"<<"\033[0m"<<""<<EDGE<<"╝"<<"\033[0m"<<""<<endl;
 }
 
 

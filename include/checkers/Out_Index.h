@@ -907,8 +907,8 @@ int Out_Index::VarCalculatorFour(char opcode,Stmt* node){//opcode是运算符，
       //std::cout<<itl->getValue().getSExtValue()<<std::endl;//itl的值
       if(!flag)//第一个运算值
       {
-        sum = itl->getValue().getSExtValue();
-        firstVar = new varVar{true,sum};
+        sum = (itl->getValue().getSExtValue());
+        firstVar = new varVar{true,(int)sum};
         flag = true;
       }
       else
@@ -933,7 +933,7 @@ int Out_Index::VarCalculatorFour(char opcode,Stmt* node){//opcode是运算符，
         default:
           break;
         }      
-        secodeVar = new varVar{true,itl->getValue().getSExtValue()};
+        secodeVar = new varVar{true,(int)itl->getValue().getSExtValue()};
       }     
     }   
     

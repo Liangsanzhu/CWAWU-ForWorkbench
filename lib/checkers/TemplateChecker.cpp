@@ -9,7 +9,8 @@
 using namespace std;
 
 void TemplateChecker::check() {
-  // for example
+  readline();
+  //读取缺陷报错自定义配置
   auto astr_iter = getASTRsBegin();
  // VU_Entry1(astr_iter);//变量未初始化
  Out_Index OI;
