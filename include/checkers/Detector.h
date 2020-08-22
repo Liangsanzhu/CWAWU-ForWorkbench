@@ -251,10 +251,13 @@ if(e->filter!=""&&SourceCode.find(e->filename)!=SourceCode.end()&&e->lineno>=1)
 	if(SourceCode.find(e->filename)->second[e->lineno-1].find(e->filter)==string::npos)
 		return false;
  }
+if(e->type==TYPE_ERROR)
+{
 LIGHT
 BLUE
 cout<<counttemp+1<<":";
 CLOSE
+}
   LIGHT
   cout<<e->filename<<":"<<e->lineno<<":"<<e->colno<<":";
   switch(e->type)

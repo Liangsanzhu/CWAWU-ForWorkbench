@@ -15,6 +15,7 @@ void TemplateChecker::check() {
  // VU_Entry1(astr_iter);//变量未初始化
  Out_Index OI;
  MemoryLeak ML;
+ Null_Pointer_Detector NPD;
  //Buffer_Overflow BOF;
   while (astr_iter != getASTRsEnd()) {
     OI.OI_Entry(astr_iter);//数组越界
@@ -26,6 +27,7 @@ void TemplateChecker::check() {
      //BOF.BOF_Entry_old(fd);
       //VU_Entry2(fd);
       //NPD_Entry(fd);//空指针解引用
+      NPD.NPD_Entry(fd);
       ML.ML_Entry(fd);//内存泄漏
       }
 
