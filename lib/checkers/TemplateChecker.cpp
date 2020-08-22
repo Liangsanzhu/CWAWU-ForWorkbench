@@ -12,20 +12,21 @@ void TemplateChecker::check() {
   readline();
   //读取缺陷报错自定义配置
   auto astr_iter = getASTRsBegin();
- // VU_Entry1(astr_iter);//变量未初始化
+ VariableUndefined VU;
  Out_Index OI;
  MemoryLeak ML;
  Null_Pointer_Detector NPD;
- //Buffer_Overflow BOF;
+ Buffer_Overflow BOF;
   while (astr_iter != getASTRsEnd()) {
     OI.OI_Entry(astr_iter);//数组越界
-
+    VU.VU_Entry1(astr_iter);
     auto fds = astr_iter->second.GetFunctionDecls();
     for (auto fd : fds) {
       
      Get_SourceCode(fd);
-     //BOF.BOF_Entry_old(fd);
-      //VU_Entry2(fd);
+     BOF.BOF_Entry_old(fd);
+      VU.VU_Entry2(fd);
+      VU.VU_Detect();
       //NPD_Entry(fd);//空指针解引用
       NPD.NPD_Entry(fd);
       ML.ML_Entry(fd);//内存泄漏
@@ -36,7 +37,7 @@ void TemplateChecker::check() {
   OI.OI_Dectect();
   //VU_Detect();
  // NPD_Detect();
- //BOF.BOF_Detect();
+ BOF.BOF_Detect();
  ML.ML_Detect();
   print_result();//打印所有出错信息
 }

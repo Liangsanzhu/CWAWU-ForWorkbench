@@ -40,3 +40,9 @@
 61	27902	1598065181	lib/checkers/CMakeFiles/checkers.dir/TemplateChecker.cpp.o	78b734785b51193e
 27904	28821	1598065182	lib/checkers/libcheckers.a	7cd31aa3f704113
 28821	44343	1598065197	tools/TemplateChecker/TemplateChecker	7582594fd9ff8030
+299	55163	1598086574	tools/TemplateChecker/CMakeFiles/TemplateChecker.dir/main.cpp.o	30ac64382597e6e8
+294	60857	1598086580	lib/framework/CMakeFiles/framework.dir/ASTManager.cpp.o	aae2eb64ab64fc8a
+58	3730	1598086621	lib/framework/libframework.a	cee44b0aef58d851
+2	16860	1598086777	lib/checkers/CMakeFiles/checkers.dir/TemplateChecker.cpp.o	78b734785b51193e
+16860	17231	1598086778	lib/checkers/libcheckers.a	7cd31aa3f704113
+17232	32486	1598086793	tools/TemplateChecker/TemplateChecker	7582594fd9ff8030
